@@ -1,0 +1,3 @@
+Para la creación de un nuevo proyecto, ingresamos a nuestro directorio base por consola e ingresamos el siguiente comando:
+
+	"Carpeta_contenedora">flutter create -i swift -a java --androidx --org=<dominio.organizacion> <nombre_proyecto>
