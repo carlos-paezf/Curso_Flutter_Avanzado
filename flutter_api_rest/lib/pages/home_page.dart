@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_api_rest/widgets/icon_container.dart';
 import '../widgets/circle.dart';
 
 class HomePage extends StatefulWidget {
@@ -21,8 +22,11 @@ class _HomePageState extends State<HomePage> {
         width: double.infinity,
         height: double.infinity,
         color: Colors.white,
-        //* Ubicación del widget Circle
-        child: Stack(children: <Widget>[
+        //* Ubicación de los widgets
+        child: Stack(
+          alignment: Alignment.center,
+          children: <Widget>[
+
           //* Ubicar el widget con valores especificos
           //? Widget Circle de la derecha
           Positioned(
@@ -41,7 +45,13 @@ class _HomePageState extends State<HomePage> {
             ),
             left: size.width * -0.15,
             top: size.width * -0.3,
-          )
+          ),
+
+          //? Widget para el icono de login
+          Positioned(
+            top: size.width * 0.4,
+            child: IconContainer(size: size.width * 0.3)
+          ),
         ]),
       ),
     );
