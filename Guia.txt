@@ -1,3 +1,12 @@
 Para la creación de un nuevo proyecto, ingresamos a nuestro directorio base por consola e ingresamos el siguiente comando:
 
 	"Carpeta_contenedora">flutter create -i swift -a java --androidx --org=<dominio.organizacion> <nombre_proyecto>
+
+Durante el proyecto de Flutter Api Rest, para el icono de login, es necesario ingresar a la pagina pub.dev y buscar la libreria flutter_svg, en el primer enlace,
+ingresamos a la pestaña instalacion y alli seguimos las instrucciones. En este caso, copie el siguiente codigo:
+	
+	dependences:
+		flutter_svg: ^0.18.1				<-- Esta linea es la unica que se toma
+
+Posteriormente en el archivo pubspec.yaml, dentro de la seccion dependences, pegamos la linea anterior, con su respectiva identacion. Tambien, dentro del mismo archivo,
+nos dirigimos al apartado de assets e ingresamos la ruta del archivo que quermos agregar.
