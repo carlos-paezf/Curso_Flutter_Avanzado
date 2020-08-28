@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_api_rest/utils/responsive.dart';
 import 'package:flutter_api_rest/widgets/icon_container.dart';
 import '../widgets/circle.dart';
 
@@ -12,9 +13,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-
-    //! Dimensiones del dispositivo que se esta usando, esto permite un widget responsive
-    final Size size = MediaQuery.of(context).size;
+    //! Aplicacion de mi clase Responsive
+    final Responsive responsive = Responsive.of(context);
 
     return Scaffold(
       body: Container(
@@ -23,34 +23,51 @@ class _HomePageState extends State<HomePage> {
         height: double.infinity,
         color: Colors.white,
         //* Ubicación de los widgets
-        child: Stack(
-          alignment: Alignment.center,
-          children: <Widget>[
-
+        child: Stack(alignment: Alignment.center, children: <Widget>[
           //* Ubicar el widget con valores especificos
           //? Widget Circle de la derecha
           Positioned(
             child: Circle(
-              size: size.width * 0.9,
-              colors: [Colors.pink, Colors.pinkAccent, Colors.pink[500], Colors.pinkAccent[400], Colors.red[700]],
+              size: responsive.wp(90),
+              colors: [
+                Colors.pink,
+                Colors.pinkAccent,
+                Colors.pink[500],
+                Colors.pinkAccent[400],
+                Colors.red[700]
+              ],
             ),
-            right: size.width * -0.2,
-            top: size.width * -0.3,
+            right: responsive.wp(-20),
+            top: responsive.wp(-30),
           ),
           //? Widget Circle de la izquierda superpuesto al anterior
           Positioned(
             child: Circle(
-              size: size.width * 0.65,
-              colors: [Colors.orange, Colors.deepOrangeAccent, Colors.deepOrange[700]],
+              size: responsive.wp(65),
+              colors: [
+                Colors.orange,
+                Colors.deepOrangeAccent,
+                Colors.deepOrange[700]
+              ],
             ),
-            left: size.width * -0.15,
-            top: size.width * -0.3,
+            left: responsive.wp(-15),
+            top: responsive.wp(-30),
           ),
 
           //? Widget para el icono de login
           Positioned(
-            top: size.width * 0.4,
-            child: IconContainer(size: size.width * 0.3)
+            top: responsive.wp(40),
+            child: Column(
+              children: <Widget>[
+                IconContainer(size: responsive.wp(30)),
+                SizedBox(height: responsive.hp(3)),
+                Text(
+                  'Hello Again\nWelcome Back!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: responsive.dp(2.5)),
+                )
+              ],
+            ),
           ),
         ]),
       ),
