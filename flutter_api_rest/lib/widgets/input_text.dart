@@ -5,13 +5,15 @@ class InputText extends StatelessWidget {
   final String label;
   final TextInputType keyboardType;
   final bool obscureText, borderEnable;
+  final double fontSize;
   //! Constructor
   const InputText(
       {Key key,
       this.label = '',
       this.keyboardType = TextInputType.text,
       this.obscureText = false,
-      this.borderEnable = true})
+      this.borderEnable = true,
+      this.fontSize = 15})
       : super(key: key);
 
   @override
@@ -20,6 +22,7 @@ class InputText extends StatelessWidget {
     return TextFormField(
       keyboardType: this.keyboardType,
       obscureText: this.obscureText,
+      style: TextStyle(fontSize: this.fontSize),
       decoration: InputDecoration(
         contentPadding: EdgeInsets.symmetric(vertical: 5),
         //! Condicional ternario
