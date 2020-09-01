@@ -110,23 +110,36 @@ class _RegisterPageState extends State<RegisterPage> {
                         style: TextStyle(
                             fontSize: responsive.dp(2.5), color: Colors.white),
                       ),
-                      SizedBox(height: responsive.dp(1)),
+                      SizedBox(height: responsive.isTablet
+                              ? responsive.dp(0.5)
+                              : responsive.dp(1)),
                       Text(
                         'Sign up to get start!',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontSize: responsive.dp(2.5), color: Colors.white),
+                          fontSize: responsive.dp(2.5),
+                          color: Colors.white,
+                        ),
                       ),
-                      SizedBox(height: responsive.dp(3)),
+                      SizedBox(
+                          height: responsive.isTablet
+                              ? responsive.dp(1)
+                              : responsive.dp(3)),
                       AvatarButton(
-                        imageSize: responsive.wp(25),
+                        imageSize: responsive.isTablet
+                            ? responsive.wp(20)
+                            : responsive.wp(25),
                       ),
                     ],
                   ),
                 ),
                 Positioned(
-                  left: responsive.wp(5),
-                  top: responsive.hp(3),
+                  left: responsive.isTablet
+                              ? responsive.wp(3)
+                              : responsive.wp(5),
+                  top: responsive.isTablet
+                              ? responsive.hp(2)
+                              : responsive.hp(3),
                   //! Boton de estilo IOS
                   child: SafeArea(
                     child: CupertinoButton(

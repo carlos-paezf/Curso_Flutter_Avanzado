@@ -32,14 +32,15 @@ class AvatarButton extends StatelessWidget {
         ),
         //! Boton de estilo IOS
         Positioned(
-          bottom: 0,
-          right: 0,
+          bottom: responsive.isTablet ? responsive.dp(0.5) : 0,
+          right: responsive.isTablet ? responsive.dp(1) : 0,
           child: CupertinoButton(
             child: Container(
               child: Icon(
                 Icons.add,
                 color: Colors.white,
-                size: responsive.dp(2.5),
+                size:
+                    responsive.isTablet ? responsive.dp(2) : responsive.dp(2.5),
               ),
               decoration: BoxDecoration(
                 border: Border.all(
