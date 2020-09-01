@@ -6,15 +6,19 @@ class InputText extends StatelessWidget {
   final TextInputType keyboardType;
   final bool obscureText, borderEnable;
   final double fontSize;
+  final void Function(String text) onChaged;
+  final String Function(String text) validator;
   //! Constructor
-  const InputText(
-      {Key key,
-      this.label = '',
-      this.keyboardType = TextInputType.text,
-      this.obscureText = false,
-      this.borderEnable = true,
-      this.fontSize = 15})
-      : super(key: key);
+  const InputText({
+    Key key,
+    this.label = '',
+    this.keyboardType = TextInputType.text,
+    this.obscureText = false,
+    this.borderEnable = true,
+    this.fontSize = 15,
+    this.onChaged,
+    this.validator,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +27,8 @@ class InputText extends StatelessWidget {
       keyboardType: this.keyboardType,
       obscureText: this.obscureText,
       style: TextStyle(fontSize: this.fontSize),
+      onChanged: this.onChaged,
+      validator: this.validator,
       decoration: InputDecoration(
         contentPadding: EdgeInsets.symmetric(vertical: 5),
         //! Condicional ternario

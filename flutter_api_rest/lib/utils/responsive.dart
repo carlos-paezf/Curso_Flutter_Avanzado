@@ -16,8 +16,8 @@ class Responsive {
   static Responsive of(BuildContext context) => Responsive(context);
 
   //! Constructor
-  Responsive(BuildContext context){
-    final Size size =  MediaQuery.of(context).size;
+  Responsive(BuildContext context) {
+    final Size size = MediaQuery.of(context).size;
     this._width = size.width;
     this._height = size.height;
     //* c^2 = a^2 + b^2  => c = sqrt(a^2 + b^2)
@@ -32,5 +32,4 @@ class Responsive {
   double hp(double percent) => _height * percent / 100;
   //! Valor de la diagonal respecto a un porcentaje
   double dp(double percent) => _diagonal * percent / 100;
-
 }

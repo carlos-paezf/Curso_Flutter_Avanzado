@@ -50,8 +50,12 @@ class _HomePageState extends State<HomePage> {
                       Colors.red[700]
                     ],
                   ),
-                  right: responsive.isTablet ? responsive.wp(-30) : responsive.wp(-20),
-                  top: responsive.isTablet ? responsive.wp(-50) : responsive.wp(-30),
+                  right: responsive.isTablet
+                      ? responsive.wp(-30)
+                      : responsive.wp(-20),
+                  top: responsive.isTablet
+                      ? responsive.wp(-50)
+                      : responsive.wp(-30),
                 ),
 
                 //? Widget Circle de la izquierda superpuesto al anterior
@@ -64,13 +68,19 @@ class _HomePageState extends State<HomePage> {
                       Colors.deepOrange[700]
                     ],
                   ),
-                  left: responsive.isTablet ? responsive.wp(-10) : responsive.wp(-15),
-                  top: responsive.isTablet ? responsive.wp(-40) : responsive.wp(-30),
+                  left: responsive.isTablet
+                      ? responsive.wp(-10)
+                      : responsive.wp(-15),
+                  top: responsive.isTablet
+                      ? responsive.wp(-40)
+                      : responsive.wp(-30),
                 ),
 
                 //? Widget para el icono de login
                 Positioned(
-                  top: responsive.isTablet ? responsive.wp(15) : responsive.wp(40),
+                  top: responsive.isTablet
+                      ? responsive.wp(15)
+                      : responsive.wp(40),
                   child: Column(
                     children: <Widget>[
                       IconContainer(size: responsive.wp(30)),
