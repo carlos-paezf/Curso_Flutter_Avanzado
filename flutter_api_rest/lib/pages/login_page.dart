@@ -4,14 +4,16 @@ import 'package:flutter_api_rest/widgets/icon_container.dart';
 import 'package:flutter_api_rest/widgets/login_form.dart';
 import '../widgets/circle.dart';
 
-class HomePage extends StatefulWidget {
-  HomePage({Key key}) : super(key: key);
+class LoginPage extends StatefulWidget {
+  //! Propiedad para la ruta
+  static const routeName = 'login';
+  LoginPage({Key key}) : super(key: key);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     //! Aplicacion de mi clase Responsive

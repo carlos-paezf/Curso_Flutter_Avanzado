@@ -135,7 +135,9 @@ class _LoginFormState extends State<LoginForm> {
                           color: Colors.redAccent,
                           fontSize: responsive.dp(1.55)),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushNamed(context, 'register');
+                    },
                   )
                 ],
               ),
