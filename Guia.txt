@@ -10,3 +10,9 @@ ingresamos a la pestaña instalacion y alli seguimos las instrucciones. En este 
 
 Posteriormente en el archivo pubspec.yaml, dentro de la seccion dependences, pegamos la linea anterior, con su respectiva identacion. Tambien, dentro del mismo archivo,
 nos dirigimos al apartado de assets e ingresamos la ruta del archivo que quermos agregar.
+
+Durante el curso de avanzada, me tope con 2 recursos importantes para implementar dentro del proyecto, para ello, replico las urls recursos:
+
+	https://github.com/meedu-app/backend-curso-api-jwt-flutter				<-- Codigo Fuente API
+	https://documenter.getpostman.com/view/11872782/T17AkWYL?version=latest			<-- Documentación API
+
