@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_api_rest/api/my_api.dart';
 import 'package:flutter_api_rest/utils/responsive.dart';
 import 'input_text.dart';
 
@@ -17,7 +18,11 @@ class _RegisterFormState extends State<RegisterForm> {
   _submit() {
     final isOk = _formKey.currentState.validate();
     print("form isOk $isOk");
-    if (isOk) {}
+    if (isOk) {
+      //* Si los datos son correctos, se empieza a consumir la API
+      MyAPI myAPI = new MyAPI();
+      myAPI.register(username: _username, email: _email, password: _password);
+    }
   }
 
   @override
@@ -77,6 +82,7 @@ class _RegisterFormState extends State<RegisterForm> {
               ),
               InputText(
                 label: 'Password',
+                obscureText: true,
                 keyboardType: TextInputType.emailAddress,
                 fontSize: responsive.dp(1.55),
                 onChaged: (text) {
