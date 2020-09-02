@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_api_rest/api/my_api.dart';
+import 'package:flutter_api_rest/utils/dialogs.dart';
 import 'package:flutter_api_rest/utils/responsive.dart';
 import 'input_text.dart';
 
@@ -15,13 +16,20 @@ class _RegisterFormState extends State<RegisterForm> {
   GlobalKey<FormState> _formKey = GlobalKey();
   String _email = '', _password = '', _username = '';
   //! Metodo de prueba para el boton Sign in
-  _submit() {
+  _submit() async {
     final isOk = _formKey.currentState.validate();
     print("form isOk $isOk");
     if (isOk) {
       //* Si los datos son correctos, se empieza a consumir la API
       MyAPI myAPI = new MyAPI();
-      myAPI.register(username: _username, email: _email, password: _password);
+      //* Esperar que se realice la llamada al API
+      await myAPI.register(
+        context,
+        username: _username,
+        email: _email,
+        password: _password,
+      );
+      //progressDialog.dismiss();
     }
   }
 
