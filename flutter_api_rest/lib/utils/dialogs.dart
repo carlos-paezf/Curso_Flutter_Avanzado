@@ -28,11 +28,14 @@ class Dialogs {
     showDialog(
       context: context,
       builder: (_) => CupertinoAlertDialog(
-        title: title != null ? Text('Alert') : null,
+        title: title != null ? Text(title) : null,
         content: content != null ? Text(content) : null,
         actions: <Widget>[
           CupertinoDialogAction(
-            child: Text('OK'),
+            child: Text(
+              'OK',
+              style: TextStyle(color: Colors.red[600]),
+            ),
             onPressed: () {
               Navigator.pop(context);
             },
