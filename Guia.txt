@@ -16,3 +16,9 @@ Durante el curso de avanzada, me tope con 2 recursos importantes para implementa
 	https://github.com/meedu-app/backend-curso-api-jwt-flutter				<-- Codigo Fuente API
 	https://documenter.getpostman.com/view/11872782/T17AkWYL?version=latest			<-- Documentación API
 
+Cada vez que ingresamos a la aplicacion deberiamos entrar de manera directa a nuestra sesion, es decir, evitar el login mientras ya estemos logeados con antelación,
+para ello guardamos el token y el tiempo de expiración en las preferencias de nuestra aplicación. Para hacer eso, ingresamos a puv.dev y buscamos la libreria
+flutter_secure_storage, luego lo instalamos con el siguiente comando en pubspec.yaml
+
+	dependencies:
+		flutter_secure_storage: ^3.3.3			<-- Esta linea es la unica que se toma
