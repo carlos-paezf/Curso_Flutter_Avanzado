@@ -2,13 +2,13 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_api_rest/pages/home_page.dart';
+import 'package:flutter_api_rest/utils/auth.dart';
 import 'package:flutter_api_rest/utils/dialogs.dart';
 import 'package:meta/meta.dart';
 
 class MyAPI {
-  final Dio _dio = Dio(
-    BaseOptions(baseUrl: 'https://curso-api-flutter.herokuapp.com')
-  );
+  final Dio _dio =
+      Dio(BaseOptions(baseUrl: 'https://curso-api-flutter.herokuapp.com'));
 
   Future<void> register(
     BuildContext context, {
@@ -29,8 +29,14 @@ class MyAPI {
         options: Options(
           headers: {'Content-Type': 'application/json'},
         ),
-        data: {'username': username, 'email': email, 'password': password},
+        data: {
+          'username': username,
+          'email': email,
+          'password': password,
+        },
       );
+
+      await Auth.instance.setSession(response.data);
       progressDialog.dismiss();
 
       //! Puedo ignorar lo siguiente por la forma en que esta estructurada la API
@@ -83,8 +89,13 @@ class MyAPI {
         options: Options(
           headers: {'Content-Type': 'application/json'},
         ),
-        data: {'email': email, 'password': password},
+        data: {
+          'email': email,
+          'password': password,
+        },
       );
+
+      await Auth.instance.setSession(response.data);
       progressDialog.dismiss();
 
       //! Puedo ignorar lo siguiente por la forma en que esta estructurada la API

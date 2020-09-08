@@ -22,3 +22,8 @@ flutter_secure_storage, luego lo instalamos con el siguiente comando en pubspec.
 
 	dependencies:
 		flutter_secure_storage: ^3.3.3			<-- Esta linea es la unica que se toma
+
+Volvemos a ingresar a pub.dev y buscamos las dependencia after_loyout, y copiamos el codigo de instalación y lo copiamos en pubspec.yaml:
+
+	dependencies:
+		after_layout: ^1.0.7+2
