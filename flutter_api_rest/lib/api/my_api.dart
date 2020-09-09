@@ -136,4 +136,17 @@ class MyAPI {
       }
     }
   }
+
+  Future<dynamic> refresh(String expiredToken) async {
+    try {
+      final Response response = await this._dio.post('/api/v1/refresh-token',
+          options: Options(headers: {
+            'token': expiredToken,
+          }));
+      return response.data;
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
 }

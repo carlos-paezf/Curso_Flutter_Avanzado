@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_api_rest/api/my_api.dart';
 import 'package:flutter_api_rest/pages/login_page.dart';
 import 'package:meta/meta.dart' show required;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -16,6 +18,53 @@ class Auth {
   final _storage = FlutterSecureStorage();
   final key = 'SESSION';
 
+  //! Garantizar que si hago varias llamadas al get accessToken
+  //! primero termine las llamadas anteriores y luego realice la llamada en cuestion
+  Completer _completer;
+
+  //? Obtener el estado del token y renovarlo dependiendo del tiempo
+  Future<String> get accessToken async {
+    if (_completer != null) {
+      await _completer.future;
+    }
+    print('acessToken');
+    _completer = new Completer();
+    final Session session = await this.getSession();
+    if (session != null) {
+      final DateTime currentDate = DateTime.now();
+      final DateTime createdAt = session.createdAt;
+      final int expiresIn = session.expiresIn;
+      //final int diff = currentDate.difference(createdAt).inSeconds;
+      //* variable de prueba
+      final int diff = 3554;
+      print('time ${expiresIn - diff}');
+      if (expiresIn - diff >= 60) {
+        print('Token Alive');
+        _complete();
+        return session.token;
+      } else {
+        MyAPI myAPI = MyAPI();
+        final Map<String, dynamic> data = await myAPI.refresh(session.token);
+        print('Refresh token');
+        if (data != null) {
+          await this.setSession(data);
+          _complete();
+          return data['token'];
+        }
+        _complete();
+        return null;
+      }
+    }
+    _complete();
+    print('Session null');
+    return null;
+  }
+
+  _complete(){
+    if (this._completer != null && !this._completer.isCompleted){
+      this._completer.complete();
+    }
+  }
   //! Por medio de este método empezamos a guardar los datos
   //! anteriores en las preferencias de la app
   Future<void> setSession(Map<String, dynamic> data) async {

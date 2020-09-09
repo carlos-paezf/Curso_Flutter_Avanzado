@@ -15,12 +15,16 @@ class SplashPage extends StatefulWidget {
 class _SplashPageState extends State<SplashPage> with AfterLayoutMixin {
   @override
   void afterFirstLayout(BuildContext context) {
+    //? Llamadas falsas al token
+    /*Auth.instance.accessToken;
+    Auth.instance.accessToken;
+    Auth.instance.accessToken;*/
     this._check();
   }
 
   _check() async {
-    final Session session = await Auth.instance.getSession();
-    if (session != null) {
+    final String token = await Auth.instance.accessToken;
+    if (token != null) {
       print('Was logged');
       Navigator.pushReplacementNamed(context, HomePage.routeName);
     } else {
