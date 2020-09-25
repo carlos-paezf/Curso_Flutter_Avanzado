@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_api_rest/api/my_api.dart';
-import 'package:flutter_api_rest/utils/dialogs.dart';
 import 'package:flutter_api_rest/utils/responsive.dart';
 import 'input_text.dart';
 
@@ -21,9 +20,8 @@ class _RegisterFormState extends State<RegisterForm> {
     print("form isOk $isOk");
     if (isOk) {
       //* Si los datos son correctos, se empieza a consumir la API
-      MyAPI myAPI = new MyAPI();
       //* Esperar que se realice la llamada al API
-      await myAPI.register(
+      await MyAPI.instance.register(
         context,
         username: _username,
         email: _email,

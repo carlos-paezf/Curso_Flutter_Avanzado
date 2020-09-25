@@ -31,7 +31,9 @@ class Auth {
     _completer = new Completer();
     final Session session = await this.getSession();
     if (session != null) {
+      // ignore: unused_local_variable
       final DateTime currentDate = DateTime.now();
+      // ignore: unused_local_variable
       final DateTime createdAt = session.createdAt;
       final int expiresIn = session.expiresIn;
       //final int diff = currentDate.difference(createdAt).inSeconds;
@@ -43,8 +45,7 @@ class Auth {
         _complete();
         return session.token;
       } else {
-        MyAPI myAPI = MyAPI();
-        final Map<String, dynamic> data = await myAPI.refresh(session.token);
+        final Map<String, dynamic> data = await MyAPI.instance.refresh(session.token);
         print('Refresh token');
         if (data != null) {
           await this.setSession(data);

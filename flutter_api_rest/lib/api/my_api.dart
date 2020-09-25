@@ -1,12 +1,18 @@
 //! Hacer uso del cliente HTTP a traves de dio
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_api_rest/models/user.dart';
 import 'package:flutter_api_rest/pages/home_page.dart';
 import 'package:flutter_api_rest/utils/auth.dart';
 import 'package:flutter_api_rest/utils/dialogs.dart';
 import 'package:meta/meta.dart';
 
 class MyAPI {
+  //! Convertir la clase en Singleton
+  MyAPI._internal();
+  static MyAPI _instance = MyAPI._internal();
+  static MyAPI get instance => _instance;
+
   final Dio _dio =
       Dio(BaseOptions(baseUrl: 'https://curso-api-flutter.herokuapp.com'));
 
@@ -144,6 +150,20 @@ class MyAPI {
             'token': expiredToken,
           }));
       return response.data;
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  Future<User> getUserInfo() async {
+    try {
+      final String token = await Auth.instance.accessToken;
+      final Response response = await this._dio.get('/api/v1/user-info',
+          options: Options(headers: {
+            'token': token,
+          }));
+      return User.fromJson(response.data);
     } catch (e) {
       print(e);
       return null;
