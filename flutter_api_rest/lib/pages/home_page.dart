@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_api_rest/api/my_api.dart';
 import 'package:flutter_api_rest/models/user.dart';
 import 'package:flutter_api_rest/utils/auth.dart';
+import 'package:flutter_api_rest/widgets/avatar_button.dart';
 
 class HomePage extends StatefulWidget {
   static const routeName = 'home';
@@ -43,6 +44,7 @@ class _HomePageState extends State<HomePage> with AfterLayoutMixin {
               //? Traer los elementos o atributos del usuario
                   : Column(
                       children: <Widget>[
+                        AvatarButton(imageSize: 100,),
                         Text(this.user.username),
                         Text(this.user.email),
                         Text(this.user.createdAt.toIso8601String()),

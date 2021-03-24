@@ -27,3 +27,11 @@ Volvemos a ingresar a pub.dev y buscamos las dependencia after_loyout, y copiamo
 
 	dependencies:
 		after_layout: ^1.0.7+2
+
+Cuando pensamos cambiar la foto o avatar del usuario, debemos acceder a su camara o su galeria, para tal caso, nos dirigimos a la pagina de pub.dev y buscamos la 
+dependencia image_picker y copiamos el codigo de instalacion en pubspec.yaml:
+	
+	dependencies:
+	  	image_picker: ^0.6.7+11
+
+Es importante recordar que se debe leer la documentacion de las dependencias para asegurar el funcionamiento en las diversas plataformas. 

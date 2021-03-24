@@ -71,7 +71,7 @@ class _PizzaOrderDetailsState extends State<PizzaOrderDetails> {
               left: MediaQuery.of(context).size.width/2-_pizzaCartSize/2,
               child: PizzaCartButton(
                 onTap: (){
-                  print('Cart');
+                  bloc.startPizzaBoxAnimation();
                 },
               ),
             ),

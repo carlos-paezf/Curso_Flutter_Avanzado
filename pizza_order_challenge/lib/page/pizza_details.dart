@@ -1,5 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:pizza_order_challenge/page/ingredient.dart';
+import 'package:pizza_order_challenge/page/pizza_order_bloc.dart';
 import 'package:pizza_order_challenge/page/pizza_order_provider.dart';
 import 'package:pizza_order_challenge/page/pizza_size_button.dart';
 import 'package:pizza_order_challenge/page/pizza_size_state.dart';
@@ -12,12 +16,11 @@ class PizzaDetails extends StatefulWidget {
 
 class PizzaDetailsState extends State<PizzaDetails> with TickerProviderStateMixin {
   
-  final _notifierFocused = ValueNotifier(false);
   AnimationController _animationController;
   AnimationController _animationRotationController;
   List<Animation> _animationList = <Animation>[];
   BoxConstraints _pizzaConstraints;
-  final _notifierPizzaSize = ValueNotifier<PizzaSizeState>(PizzaSizeState(PizzaSizeValue.m));
+  final keyPizza = GlobalKey();
 
   void _buildIngredientsAnimation() {
     _animationList.clear();
@@ -118,6 +121,14 @@ class PizzaDetailsState extends State<PizzaDetails> with TickerProviderStateMixi
       vsync: this, 
       duration: const Duration(milliseconds: 400),
     );
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      final bloc = PizzaOrderProvider.of(context);
+      bloc.notifierPizzaBoxAnimation.addListener(() {
+        if(bloc.notifierPizzaBoxAnimation.value){
+          _addPizzaToCart();
+        }
+      });
+    });
   }
 
   @override
@@ -136,12 +147,12 @@ class PizzaDetailsState extends State<PizzaDetails> with TickerProviderStateMixi
           child: DragTarget<Ingredient>(
             onWillAccept: (ingredient){
               print('onWillAccept');
-              _notifierFocused.value = true;
+              bloc.notifierFocused.value = true;
               return !bloc.containsIngredients(ingredient);
             },
             onAccept: (ingredient){
               print('accept');
-              _notifierFocused.value = false;
+              bloc.notifierFocused.value = false;
               setState(() {
                 bloc.addIngredient(ingredient);
               });
@@ -150,74 +161,90 @@ class PizzaDetailsState extends State<PizzaDetails> with TickerProviderStateMixi
             },
             onLeave: (ingredient){
               print('onLeave');
-              _notifierFocused.value = false;
+              bloc.notifierFocused.value = false;
             },
             builder: (context, list, rejects){
               return LayoutBuilder(
                 builder: (context, constraints){
                   _pizzaConstraints = constraints;
-                  return ValueListenableBuilder<PizzaSizeState>(
-                    valueListenable: _notifierPizzaSize,
-                    builder: (context, pizzaSize, _){
-                      return RotationTransition(
-                        turns: CurvedAnimation(
-                          curve: Curves.elasticOut, 
-                          parent: _animationRotationController,
-                        ),
-                        child: Stack(
-                          children: [
-                            Center(
-                              child: ValueListenableBuilder<bool>(
-                                valueListenable: _notifierFocused,
-                                builder: (context, focused, _){
-                                  return AnimatedContainer(
-                                    height: focused ? 
-                                      constraints.maxHeight * pizzaSize.factor - 10 : 
-                                      constraints.maxHeight * pizzaSize.factor - 50,
-                                    duration: const Duration(milliseconds: 300),
-                                    child: Stack(
-                                      children: [
-                                        DecoratedBox(
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            boxShadow: [
-                                              BoxShadow(
-                                                blurRadius: 10.0,
-                                                color: Colors.grey[350],
-                                                offset: Offset(0.0 , 5.0),
-                                                spreadRadius: 5.0,
+                  return ValueListenableBuilder<PizzaMetadata>(
+                    valueListenable: bloc.notifierImagePizza,
+                    builder: (context, data, child){
+                      if(data != null){
+                        Future.microtask(() => _startPizzaBoxAnimation(data));
+                      }
+                      return AnimatedOpacity(
+                        opacity: data != null ? 0.0 : 1.0, 
+                        duration: const Duration(milliseconds: 60),
+                        child: ValueListenableBuilder<PizzaSizeState>(
+                        valueListenable: bloc.notifierPizzaSize,
+                        builder: (context, pizzaSize, _){
+                          return RepaintBoundary(
+                            key: keyPizza,
+                            child: RotationTransition(
+                              turns: CurvedAnimation(
+                                curve: Curves.elasticOut, 
+                                parent: _animationRotationController,
+                              ),
+                              child: Stack(
+                                children: [
+                                  Center(
+                                    child: ValueListenableBuilder<bool>(
+                                      valueListenable: bloc.notifierFocused,
+                                      builder: (context, focused, _){
+                                        return AnimatedContainer(
+                                          height: focused ? 
+                                            constraints.maxHeight * pizzaSize.factor - 10 : 
+                                            constraints.maxHeight * pizzaSize.factor - 50,
+                                          duration: const Duration(milliseconds: 300),
+                                          child: Stack(
+                                            children: [
+                                              DecoratedBox(
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      blurRadius: 10.0,
+                                                      color: Colors.grey[350],
+                                                      offset: Offset(0.0 , 5.0),
+                                                      spreadRadius: 5.0,
+                                                    ),
+                                                  ]
+                                                ),
+                                                child: Image.asset('assets/pizza_order/dish.png')
                                               ),
-                                            ]
+                                              Padding(
+                                                padding: const EdgeInsets.all(13.0), 
+                                                child: Image.asset('assets/pizza_order/pizza-1.png'),
+                                              ),
+                                            ],
                                           ),
-                                          child: Image.asset('assets/pizza_order/dish.png')
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(13.0), 
-                                          child: Image.asset('assets/pizza_order/pizza-1.png'),
-                                        ),
-                                      ],
+                                        );
+                                      },
                                     ),
-                                  );
-                                },
+                                  ),
+                                  ValueListenableBuilder<Ingredient>(
+                                    valueListenable: bloc.notifierDeletedIngredient,
+                                    builder: (context, deletedIngredient, _){
+                                      _animatedDeletedIngredient(deletedIngredient);
+                                      return AnimatedBuilder(
+                                        animation: _animationController,
+                                        builder: (context, _) {
+                                          return _buildIngredientsWidget(deletedIngredient);
+                                        },
+                                      );
+                                    }
+                                  ),
+                                ]
                               ),
                             ),
-                            ValueListenableBuilder<Ingredient>(
-                              valueListenable: bloc.notifierDeletedIngredient,
-                              builder: (context, deletedIngredient, _){
-                                _animatedDeletedIngredient(deletedIngredient);
-                                return AnimatedBuilder(
-                                  animation: _animationController,
-                                  builder: (context, _) {
-                                    return _buildIngredientsWidget(deletedIngredient);
-                                  },
-                                );
-                              }
-                            ),
-                          ]
-                        ),
+                          );
+                        },
+                    ),
                       );
                     },
                   );
+                
                 },
               );
             }  
@@ -261,7 +288,7 @@ class PizzaDetailsState extends State<PizzaDetails> with TickerProviderStateMixi
           height: 15,
         ),
         ValueListenableBuilder<PizzaSizeState>(
-          valueListenable: _notifierPizzaSize,
+          valueListenable: bloc.notifierPizzaSize,
           builder: (context, pizzaSize, _){
             return Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -304,7 +331,138 @@ class PizzaDetailsState extends State<PizzaDetails> with TickerProviderStateMixi
   }
 
   void _updatePizzaSize(PizzaSizeValue value){
-    _notifierPizzaSize.value = PizzaSizeState(value);
+    final bloc = PizzaOrderProvider.of(context);
+    bloc.notifierPizzaSize.value = PizzaSizeState(value);
     _animationRotationController.forward(from: 0.0);
   }
+
+  void _addPizzaToCart() {
+    final bloc = PizzaOrderProvider.of(context);
+    RenderRepaintBoundary boundary = keyPizza.currentContext.findRenderObject();
+    bloc.transformToImage(boundary);
+  }
+
+  OverlayEntry _overlayEntry;
+
+  void _startPizzaBoxAnimation(PizzaMetadata metadata){
+    final bloc = PizzaOrderProvider.of(context);
+    if (_overlayEntry == null){
+      _overlayEntry = OverlayEntry(builder: (context){
+        return PizzaOrderAnimation(
+          metadata: metadata,
+          onComplete: (){
+            _overlayEntry.remove();
+            _overlayEntry = null;
+            bloc.reset();
+          }
+        );
+      });
+      Overlay.of(context).insert(_overlayEntry);
+    }
+  }
+}
+
+
+class PizzaOrderAnimation extends StatefulWidget {
+  PizzaOrderAnimation({Key key, this.metadata, this.onComplete}) : super(key: key);
+
+  final PizzaMetadata metadata;
+  final VoidCallback onComplete;
+
+  @override
+  _PizzaOrderAnimationState createState() => _PizzaOrderAnimationState();
+}
+
+class _PizzaOrderAnimationState extends State<PizzaOrderAnimation> with SingleTickerProviderStateMixin{
+  AnimationController _controller;
+
+  @override
+  void initState() { 
+    super.initState();
+    _controller = AnimationController(vsync: this);
+  }
+
+  @override
+  void dispose(){
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final metadata = widget.metadata;
+    return Positioned(
+      top: metadata.position.dy,
+      left: metadata.position.dx,
+      width: metadata.size.width,
+      height: metadata.size.height,
+      child: GestureDetector(
+        onTap: (){
+          widget.onComplete();
+        },
+        child: Stack(
+          children: [             
+            Image.memory(widget.metadata.imageBytes),
+            _buildBox(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBox(){
+    return LayoutBuilder(builder: (context, constraints){
+      final boxHeight = constraints.maxHeight / 2.0;
+      final boxWidth = constraints.maxWidth / 2.0;
+      final minAngle = -45.0;
+      final maxAngle = -130.0;
+      return Stack(
+        children: [
+          Center(
+            child: Transform(
+              alignment: Alignment.topCenter,
+              transform: Matrix4.identity()
+              ..setEntry(3, 2, 0.003)
+              ..rotateX(degreesToRads(minAngle)),
+              child: Image.asset(
+                'assets/pizza_order/box_inside.png',
+                height: boxHeight,
+                width: boxWidth,
+              ),
+            ),
+          ),
+          Center(
+            child: Transform(
+              alignment: Alignment.topCenter,
+              transform: Matrix4.identity()
+                ..setEntry(3, 2, 0.003)
+                ..rotateX(degreesToRads(maxAngle)),
+              child: Image.asset(
+                'assets/pizza_order/box_inside.png',
+                height: boxHeight,
+                width: boxWidth,
+              ),
+            ),
+          ),
+          Center(
+            child: Transform(
+              alignment: Alignment.topCenter,
+              transform: Matrix4.identity()
+                ..setEntry(3, 2, 0.003)
+                ..rotateX(degreesToRads(minAngle)),
+              child: Image.asset(
+                'assets/pizza_order/box_diegoveloper.png',
+                height: boxHeight,
+                width: boxWidth,
+              ),
+            ),
+          ),
+        ],
+      );
+    },);
+  }
+}
+
+num degreesToRads(num deg){
+  return (deg * pi) / 180.0;
 }
