@@ -17,7 +17,6 @@ class PizzaCartButtonState extends State<PizzaCartButton> with SingleTickerProvi
       upperBound: 1.5,
       duration: const Duration(milliseconds: 150),
     );
-    super.initState();
   }
 
   @override

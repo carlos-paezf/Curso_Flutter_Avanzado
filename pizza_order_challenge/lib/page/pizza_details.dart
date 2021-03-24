@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -375,11 +376,39 @@ class PizzaOrderAnimation extends StatefulWidget {
 
 class _PizzaOrderAnimationState extends State<PizzaOrderAnimation> with SingleTickerProviderStateMixin{
   AnimationController _controller;
+  Animation<double> _pizzaScaleAnimation;
+  Animation<double> _pizzaOpacityAnimation;
+  Animation<double> _boxEnterScaleAnimation;
+  Animation<double> _boxExitScaleAnimation;
+  Animation<double> _boxExitToCartAnimation;
 
   @override
   void initState() { 
     super.initState();
-    _controller = AnimationController(vsync: this);
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 2500));
+    _pizzaScaleAnimation = Tween(
+      begin: 1.0, end: 0.5).animate(
+        CurvedAnimation(
+          parent: _controller, 
+          curve: Interval(0.0, 0.2)
+        )
+    );
+    _pizzaOpacityAnimation = CurvedAnimation(curve: Interval(0.2, 0.4), parent: _controller);
+    _boxEnterScaleAnimation = CurvedAnimation(curve: Interval(0.0, 0.2), parent: _controller);
+    _boxExitScaleAnimation = Tween(
+      begin: 1.0, end:1.5).animate(
+        CurvedAnimation(
+          curve: Interval(0.5, 0.7), 
+          parent: _controller
+        )
+    );
+    _boxExitToCartAnimation = CurvedAnimation(parent: _controller, curve: Interval(0.8, 1.0));
+    _controller.forward(from: 0.0);
+    _controller.addStatusListener((status){
+      if (status == AnimationStatus.completed){
+        widget.onComplete();
+      }
+    } );
   }
 
   @override
@@ -400,11 +429,43 @@ class _PizzaOrderAnimationState extends State<PizzaOrderAnimation> with SingleTi
         onTap: (){
           widget.onComplete();
         },
-        child: Stack(
-          children: [             
-            Image.memory(widget.metadata.imageBytes),
-            _buildBox(),
-          ],
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, snapshot) {
+            final moveToX = _boxExitToCartAnimation.value > 0 
+              ? metadata.position.dx + metadata.size.width/2 * _boxExitToCartAnimation.value 
+              : 0.0;
+            final moveToY = _boxExitToCartAnimation.value > 0
+              ? -metadata.size.height/2 * _boxExitToCartAnimation.value
+              : 0.0;
+            return Opacity(
+              opacity: 1 - _boxExitToCartAnimation.value,
+              child: Transform(
+                alignment: Alignment.center,
+                transform: Matrix4.identity()
+                  ..translate(moveToX, moveToY)
+                  ..rotateZ(_boxExitToCartAnimation.value)
+                  ..scale(_boxExitScaleAnimation.value - 0.3),
+                child: Transform.scale(
+                  alignment: Alignment.center,
+                  scale: 1 - _boxExitToCartAnimation.value,
+                  child: Stack(
+                    children: [  
+                      _buildBox(),           
+                      Opacity(
+                        opacity: 1 - _pizzaOpacityAnimation.value,
+                        child: Transform(
+                          alignment: Alignment.center,
+                          transform: Matrix4.identity()
+                          ..scale(_pizzaScaleAnimation.value)..translate(0.0, 50 * (1-_pizzaOpacityAnimation.value)),
+                        child: Image.memory(widget.metadata.imageBytes)),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }
         ),
       ),
     );
@@ -415,49 +476,57 @@ class _PizzaOrderAnimationState extends State<PizzaOrderAnimation> with SingleTi
       final boxHeight = constraints.maxHeight / 2.0;
       final boxWidth = constraints.maxWidth / 2.0;
       final minAngle = -45.0;
-      final maxAngle = -130.0;
-      return Stack(
-        children: [
-          Center(
-            child: Transform(
-              alignment: Alignment.topCenter,
-              transform: Matrix4.identity()
-              ..setEntry(3, 2, 0.003)
-              ..rotateX(degreesToRads(minAngle)),
-              child: Image.asset(
-                'assets/pizza_order/box_inside.png',
-                height: boxHeight,
-                width: boxWidth,
+      final maxAngle = -145.0;
+      final boxClosingValue = lerpDouble(maxAngle, minAngle, _pizzaOpacityAnimation.value);
+      return Opacity(
+        opacity: _boxEnterScaleAnimation.value,
+        child: Transform.scale(
+          scale: _boxEnterScaleAnimation.value,
+          child: Stack(
+            children: [
+              Center(
+                child: Transform(
+                  alignment: Alignment.topCenter,
+                  transform: Matrix4.identity()
+                  ..setEntry(3, 2, 0.003)
+                  ..rotateX(degreesToRads(minAngle)),
+                  child: Image.asset(
+                    'assets/pizza_order/box_inside.png',
+                    height: boxHeight,
+                    width: boxWidth,
+                  ),
+                ),
               ),
-            ),
-          ),
-          Center(
-            child: Transform(
-              alignment: Alignment.topCenter,
-              transform: Matrix4.identity()
-                ..setEntry(3, 2, 0.003)
-                ..rotateX(degreesToRads(maxAngle)),
-              child: Image.asset(
-                'assets/pizza_order/box_inside.png',
-                height: boxHeight,
-                width: boxWidth,
+              Center(
+                child: Transform(
+                  alignment: Alignment.topCenter,
+                  transform: Matrix4.identity()
+                    ..setEntry(3, 2, 0.003)
+                    ..rotateX(degreesToRads(boxClosingValue)),
+                  child: Image.asset(
+                    'assets/pizza_order/box_inside.png',
+                    height: boxHeight,
+                    width: boxWidth,
+                  ),
+                ),
               ),
-            ),
-          ),
-          Center(
-            child: Transform(
-              alignment: Alignment.topCenter,
-              transform: Matrix4.identity()
-                ..setEntry(3, 2, 0.003)
-                ..rotateX(degreesToRads(minAngle)),
-              child: Image.asset(
-                'assets/pizza_order/box_diegoveloper.png',
-                height: boxHeight,
-                width: boxWidth,
+              if (boxClosingValue >= -80)
+              Center(
+                child: Transform(
+                  alignment: Alignment.topCenter,
+                  transform: Matrix4.identity()
+                    ..setEntry(3, 2, 0.003)
+                    ..rotateX(degreesToRads(boxClosingValue)),
+                  child: Image.asset(
+                    'assets/pizza_order/box_diegoveloper.png',
+                    height: boxHeight,
+                    width: boxWidth,
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       );
     },);
   }

@@ -15,6 +15,7 @@ class PizzaMetadata{
   const PizzaMetadata(this.imageBytes, this.position, this.size);
 }
 
+const initialTotal = 15;
 //? BLoC = Bussines Logic Components
 class PizzaOrderBLoC extends ChangeNotifier{
   final listIngredients = <Ingredient>[];
@@ -24,6 +25,7 @@ class PizzaOrderBLoC extends ChangeNotifier{
   final notifierPizzaSize = ValueNotifier<PizzaSizeState>(PizzaSizeState(PizzaSizeValue.m));
   final notifierPizzaBoxAnimation = ValueNotifier(false);
   final notifierImagePizza = ValueNotifier<PizzaMetadata>(null);
+  final notifierCartIconAnimation = ValueNotifier(0);
 
   void addIngredient(Ingredient ingredient) {
     listIngredients.add(ingredient);
@@ -52,6 +54,9 @@ class PizzaOrderBLoC extends ChangeNotifier{
   void reset(){
     notifierPizzaBoxAnimation.value = false;
     notifierImagePizza.value = null;
+    listIngredients.clear();
+    notifierTotal.value = initialTotal;
+    notifierCartIconAnimation.value++;
   }
 
   void startPizzaBoxAnimation(){

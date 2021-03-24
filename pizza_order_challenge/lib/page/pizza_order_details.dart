@@ -4,6 +4,7 @@ import 'package:pizza_order_challenge/page/pizza_details.dart';
 import 'package:pizza_order_challenge/page/pizza_ingredient_item.dart';
 import 'package:pizza_order_challenge/page/pizza_order_bloc.dart';
 import 'package:pizza_order_challenge/page/pizza_order_provider.dart';
+import 'package:pizza_order_challenge/page/pizza_shopping_icon.dart';
 
 const _pizzaCartSize = 55.0;
 
@@ -29,13 +30,7 @@ class _PizzaOrderDetailsState extends State<PizzaOrderDetails> {
           backgroundColor: Colors.white,
           elevation: 0,
           actions: [
-            IconButton(
-              icon: Icon(
-                Icons.shopping_cart,
-                color: Colors.brown,
-              ),
-              onPressed: (){},
-            ),
+            PizzaShoppingIcon(),
           ],
         ),
         body: Stack(
